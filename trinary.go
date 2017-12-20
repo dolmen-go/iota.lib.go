@@ -28,19 +28,18 @@ package giota
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"unsafe"
 )
 
 var (
-	tryteToTritsMappings = [][]int8{
-		[]int8{0, 0, 0}, []int8{1, 0, 0}, []int8{-1, 1, 0}, []int8{0, 1, 0},
-		[]int8{1, 1, 0}, []int8{-1, -1, 1}, []int8{0, -1, 1}, []int8{1, -1, 1},
-		[]int8{-1, 0, 1}, []int8{0, 0, 1}, []int8{1, 0, 1}, []int8{-1, 1, 1},
-		[]int8{0, 1, 1}, []int8{1, 1, 1}, []int8{-1, -1, -1}, []int8{0, -1, -1},
-		[]int8{1, -1, -1}, []int8{-1, 0, -1}, []int8{0, 0, -1}, []int8{1, 0, -1},
-		[]int8{-1, 1, -1}, []int8{0, 1, -1}, []int8{1, 1, -1}, []int8{-1, -1, 0},
-		[]int8{0, -1, 0}, []int8{1, -1, 0}, []int8{-1, 0, 0},
+	tryteToTritsMappings = [...][3]int8{
+		[3]int8{0, 0, 0}, [3]int8{1, 0, 0}, [3]int8{-1, 1, 0}, [3]int8{0, 1, 0},
+		[3]int8{1, 1, 0}, [3]int8{-1, -1, 1}, [3]int8{0, -1, 1}, [3]int8{1, -1, 1},
+		[3]int8{-1, 0, 1}, [3]int8{0, 0, 1}, [3]int8{1, 0, 1}, [3]int8{-1, 1, 1},
+		[3]int8{0, 1, 1}, [3]int8{1, 1, 1}, [3]int8{-1, -1, -1}, [3]int8{0, -1, -1},
+		[3]int8{1, -1, -1}, [3]int8{-1, 0, -1}, [3]int8{0, 0, -1}, [3]int8{1, 0, -1},
+		[3]int8{-1, 1, -1}, [3]int8{0, 1, -1}, [3]int8{1, 1, -1}, [3]int8{-1, -1, 0},
+		[3]int8{0, -1, 0}, [3]int8{1, -1, 0}, [3]int8{-1, 0, 0},
 	}
 )
 
@@ -315,9 +314,12 @@ func ToTrytes(t string) (Trytes, error) {
 // Trits converts a slice of trytes into trits,
 func (t Trytes) Trits() Trits {
 	trits := make(Trits, len(t)*3)
-	for i := range t {
-		idx := strings.Index(TryteAlphabet, string(t[i:i+1]))
-		copy(trits[i*3:i*3+3], tryteToTritsMappings[idx])
+	for i, c := range t {
+		tr := tryteToTritsMappings[tryteAlpha[c]]
+		i3 := 3 * i
+		trits[i3+2] = tr[2]
+		trits[i3+1] = tr[1]
+		trits[i3] = tr[0]
 	}
 	return trits
 }
