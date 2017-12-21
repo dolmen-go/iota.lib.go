@@ -32,14 +32,45 @@ import (
 )
 
 var (
-	tryteToTritsMappings = [...][3]int8{
-		[3]int8{0, 0, 0}, [3]int8{1, 0, 0}, [3]int8{-1, 1, 0}, [3]int8{0, 1, 0},
-		[3]int8{1, 1, 0}, [3]int8{-1, -1, 1}, [3]int8{0, -1, 1}, [3]int8{1, -1, 1},
-		[3]int8{-1, 0, 1}, [3]int8{0, 0, 1}, [3]int8{1, 0, 1}, [3]int8{-1, 1, 1},
-		[3]int8{0, 1, 1}, [3]int8{1, 1, 1}, [3]int8{-1, -1, -1}, [3]int8{0, -1, -1},
-		[3]int8{1, -1, -1}, [3]int8{-1, 0, -1}, [3]int8{0, 0, -1}, [3]int8{1, 0, -1},
-		[3]int8{-1, 1, -1}, [3]int8{0, 1, -1}, [3]int8{1, 1, -1}, [3]int8{-1, -1, 0},
-		[3]int8{0, -1, 0}, [3]int8{1, -1, 0}, [3]int8{-1, 0, 0},
+	tryteOffsets [256]uint8
+)
+
+func init() {
+	tryteOffsets['9'] = 0
+	for c := byte('A'); c <= 'Z'; c++ {
+		tryteOffsets[c] = 3 * (c - 'A' + 1)
+	}
+}
+
+var (
+	tryteToTritsMappings = [3 * 27]int8{
+		0, 0, 0, // '9'
+		1, 0, 0, // 'A'
+		-1, 1, 0,
+		0, 1, 0,
+		1, 1, 0,
+		-1, -1, 1,
+		0, -1, 1,
+		1, -1, 1,
+		-1, 0, 1,
+		0, 0, 1,
+		1, 0, 1,
+		-1, 1, 1,
+		0, 1, 1,
+		1, 1, 1, // 'M'
+		-1, -1, -1, // 'N'
+		0, -1, -1,
+		1, -1, -1,
+		-1, 0, -1,
+		0, 0, -1,
+		1, 0, -1,
+		-1, 1, -1,
+		0, 1, -1,
+		1, 1, -1,
+		-1, -1, 0,
+		0, -1, 0,
+		1, -1, 0,
+		-1, 0, 0, // 'Z'
 	}
 )
 
@@ -315,11 +346,11 @@ func ToTrytes(t string) (Trytes, error) {
 func (t Trytes) Trits() Trits {
 	trits := make(Trits, len(t)*3)
 	for i, c := range t {
-		tr := tryteToTritsMappings[tryteAlpha[c]]
+		tritOffset := tryteOffsets[c]
 		i3 := 3 * i
-		trits[i3+2] = tr[2]
-		trits[i3+1] = tr[1]
-		trits[i3] = tr[0]
+		trits[i3+2] = tryteToTritsMappings[tritOffset+2]
+		trits[i3+1] = tryteToTritsMappings[tritOffset+1]
+		trits[i3] = tryteToTritsMappings[tritOffset]
 	}
 	return trits
 }

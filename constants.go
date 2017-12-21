@@ -61,14 +61,3 @@ func init() {
 	}
 	emptySig = Trytes(bytes)
 }
-
-var (
-	tryteAlpha [256]uint8
-)
-
-func init() {
-	tryteAlpha['9'] = 0
-	for c := byte('A'); c <= 'Z'; c++ {
-		tryteAlpha[c] = c - 'A' + 1
-	}
-}
